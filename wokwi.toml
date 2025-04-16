@@ -1,4 +1,4 @@
 [wokwi]
 version=1
-firmware='build/arduino-lcd-helloworld.ino.hex'
-elf='build/arduino-lcd-helloworld.ino.elf'
+firmware='target/avr-none/debug/rust-x-arduino.elf'
+elf='target/avr-none/debug/rust-x-arduino.elf'
