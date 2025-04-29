@@ -5,8 +5,15 @@ authors = ["junsevith <pawelstanik44@gmail.com>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
+[lib]
+name = "rust_x_arduino"
+path = "src/lib.rs"
+test = false
+bench = false
+
 [[bin]]
 name = "rust-x-arduino"
+path = "src/bin/main.rs"
 test = false
 bench = false
 
@@ -18,12 +25,15 @@ embedded-hal = "1.0"
 
 
 port-expander = "0.6.4"
-ag-lcd = {version = "0.3.0", features = ["i2c"]}
+ag-lcd = {version = "0.3.0", features = ["i2c","ufmt"]}
 
 [dependencies.arduino-hal]
 git = "https://github.com/rahix/avr-hal"
 rev = "fafaf587a32a4500239fd073f89d1b9c36b48092"
 features = ["arduino-uno"]
+
+[dependencies.avr-device]
+version = "0.7"
 
 # Configure the build for minimal size - AVRs have very little program memory
 [profile.dev]
