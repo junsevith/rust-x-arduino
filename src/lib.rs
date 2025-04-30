@@ -7,3 +7,4 @@ pub mod timing;
 pub mod servo;
 pub mod screen_format;
 pub mod interrupts;
+pub mod movement;
