@@ -3,11 +3,13 @@
 #![feature(abi_avr_interrupt)]
 #![feature(cell_update)]
 
-use arduino_hal::delay_ms;
 use arduino_hal::prelude::_unwrap_infallible_UnwrapInfallible;
 use panic_halt as _;
+use rust_x_arduino::echo::Echo;
 use rust_x_arduino::interrupts::RotCounter;
 use rust_x_arduino::movement::engine::Engine;
+use rust_x_arduino::movement::movement::Movement;
+use rust_x_arduino::servo::Servo;
 use rust_x_arduino::timing::millis::Timer;
 
 #[arduino_hal::entry]
@@ -38,29 +40,33 @@ fn main() -> ! {
         pins.a1.into_floating_input(),
     );
 
+    let mut servo = Servo::new(dp.TC1, pins.d9.into_output());
+    let mut movement = Movement::new(left_engine, right_engine, counter);
+    let mut echo = Echo::new(pins.a5.into_output(), pins.a4.into_floating_input());
+
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };
 
-    left_engine.set_speed(255);
-    right_engine.set_speed(255);
-    left_engine.forward();
-    delay_ms(1000);
-    right_engine.forward();
-
+    const GOAL: i32 = 50;
 
     loop {
-        for i in 0..10 {
-            ufmt::uwriteln!(
-                &mut serial,
-                "time: {}, left: {}, right {}",
-                i,
-                counter.left_count(),
-                counter.right_count()
-            )
-            .unwrap_infallible();
-            arduino_hal::delay_ms(1000);
+        let dist = echo.distance(&timer) as i32 - GOAL;
+
+        let speed: u8 = match u8::try_from(dist.abs()) {
+            Ok(speed) => speed.saturating_mul(16),
+            Err(_) => {u8::MAX}
+        };
+
+        ufmt::uwriteln!(&mut serial, "speed {}:", speed).unwrap();
+
+        if dist < -5 {
+            movement.backward();
+        } else if dist > 5 {
+            movement.forward();
+        } else {
+            movement.stop();
         }
-        left_engine.stop();
-        right_engine.stop();
+
+        movement.set_speed(speed);
     }
 }

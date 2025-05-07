@@ -9,6 +9,8 @@ pub struct Servo {
 const MAX_LEFT: u32 = 115;
 const MAX_RIGHT: u32 = 620;
 
+const MIDDLE: u8 = 80;
+
 const INTERVAL: u32 = MAX_RIGHT - MAX_LEFT;
 
 impl Servo {
@@ -19,6 +21,7 @@ impl Servo {
     }
 
     fn init(&mut self) {
+        self.reset();
         // We set the top value for timer1 to 4999 so the pwm frequency is 50Hz
         self.timer.icr1.write(|w| w.bits(4999));
         // we set waveform generation mode to fast pwm (0b1100) with icr1 top
@@ -41,5 +44,9 @@ impl Servo {
     
     pub fn set_duty(&mut self, duty: u16) {
         self.timer.ocr1a.write(|w| w.bits(duty));
+    }
+
+    pub fn reset(&mut self) {
+        self.set_angle(MIDDLE);
     }
 }

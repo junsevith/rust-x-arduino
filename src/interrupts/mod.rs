@@ -13,13 +13,15 @@ static RIGHT_COUNTER: Mutex<Cell<u32>> = Mutex::new(Cell::new(0));
 
 #[avr_device::interrupt(atmega328p)]
 fn PCINT1() {
-    if unsafe {COUNTER_STATE.assume_init_ref().left_changed()} {
+    let left = unsafe {COUNTER_STATE.assume_init_ref().left_changed()};
+    let right = unsafe {COUNTER_STATE.assume_init_ref().right_changed()};
+    if left {
         avr_device::interrupt::free(|cs| {
             LEFT_COUNTER.borrow(cs).update(|x| x + 1);
         });
         unsafe {COUNTER_STATE.assume_init_mut().update_left()};
     }
-    if unsafe {COUNTER_STATE.assume_init_ref().pin_right.is_high()} {
+    if right {
         avr_device::interrupt::free(|cs| {
             RIGHT_COUNTER.borrow(cs).update(|x| x + 1);
         });

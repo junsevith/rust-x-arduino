@@ -1,2 +1,2 @@
 pub mod engine;
-mod movement;
+pub mod movement;

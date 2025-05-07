@@ -14,6 +14,7 @@ fn main() -> ! {
 
     let mut servo = Servo::new(dp.TC1, pins.d9.into_output());
 
+    core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };
 
     loop {

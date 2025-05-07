@@ -13,7 +13,7 @@ pub struct Movement<LPWM, LF, LB, RPWM, RF, RB> where
 {
     left: Engine<LPWM, LF, LB>,
     right: Engine<RPWM, RF, RB>,
-    rot_counter: RotCounter
+    pub rot_counter: RotCounter
 }
 
 impl<LPWM, LF, LB, RPWM, RF, RB> Movement<LPWM, LF, LB, RPWM, RF, RB> where
