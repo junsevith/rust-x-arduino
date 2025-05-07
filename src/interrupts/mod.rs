@@ -75,7 +75,6 @@ impl RotCounter {
 
         unsafe {
             COUNTER_STATE = MaybeUninit::new(RotCounterState::new(pin_left, pin_right));
-            core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
         }
 
         RotCounter { register }
