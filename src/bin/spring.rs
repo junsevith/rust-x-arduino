@@ -42,10 +42,12 @@ fn main() -> ! {
 
     let mut servo = Servo::new(dp.TC1, pins.d9.into_output());
     let mut movement = Movement::new(left_engine, right_engine, counter);
-    let mut echo = Echo::new(pins.a5.into_output(), pins.a4.into_floating_input());
+    let mut echo = Echo::new(pins.d10.into_output(), pins.d11.into_floating_input());
 
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };
+
+    servo.set_angle(90);
 
     const GOAL: i32 = 50;
 
@@ -53,7 +55,7 @@ fn main() -> ! {
         let dist = echo.distance(&timer) as i32 - GOAL;
 
         let speed: u8 = match u8::try_from(dist.abs()) {
-            Ok(speed) => speed.saturating_mul(16),
+            Ok(speed) => speed.saturating_mul(32),
             Err(_) => {u8::MAX}
         };
 

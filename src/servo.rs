@@ -21,7 +21,7 @@ impl Servo {
     }
 
     fn init(&mut self) {
-        self.reset();
+        // self.reset();
         // We set the top value for timer1 to 4999 so the pwm frequency is 50Hz
         self.timer.icr1.write(|w| w.bits(4999));
         // we set waveform generation mode to fast pwm (0b1100) with icr1 top

@@ -22,6 +22,7 @@ panic-halt = "0.2.0"
 ufmt = "0.2.0"
 nb = "1.1.0"
 embedded-hal = "1.0"
+infrared = "0.14.1"
 
 
 port-expander = "0.6.4"

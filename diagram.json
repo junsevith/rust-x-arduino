@@ -68,7 +68,8 @@
       "left": 268.8,
       "attrs": { "color": "green", "xray": "1" }
     },
-    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": 145.5, "left": 475.9, "attrs": {} }
+    { "type": "wokwi-ir-receiver", "id": "ir1", "top": -145.35, "left": 439.82, "attrs": {} },
+    { "type": "wokwi-ir-remote", "id": "remote1", "top": 76.8, "left": 441.6, "attrs": {} }
   ],
   "connections": [
     [ "uno:A4.2", "lcd1:SDA", "green", [ "v0" ] ],
@@ -94,10 +95,9 @@
     [ "btn1:2.r", "uno:A0", "green", [ "h0" ] ],
     [ "uno:5V", "btn2:1.l", "red", [ "v0" ] ],
     [ "uno:A1", "btn2:2.l", "green", [ "v0" ] ],
-    [ "uno:5V", "ultrasonic1:VCC", "red", [ "v47.9", "h359" ] ],
-    [ "uno:GND.2", "ultrasonic1:GND", "black", [ "v57.5", "h379.5" ] ],
-    [ "uno:A5", "ultrasonic1:TRIG", "gold", [ "v9.5", "h273.5" ] ],
-    [ "ultrasonic1:ECHO", "uno:A4", "magenta", [ "v28.8", "h-293" ] ]
+    [ "ir1:GND", "uno:GND.1", "black", [ "v38.4", "h-317.1" ] ],
+    [ "ir1:VCC", "servo1:V+", "red", [ "h-38.4", "v57.5" ] ],
+    [ "ir1:DAT", "uno:2", "green", [ "v96", "h-215.3" ] ]
   ],
   "dependencies": {}
 }

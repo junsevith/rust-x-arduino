@@ -3,14 +3,27 @@
 #![feature(abi_avr_interrupt)]
 #![feature(cell_update)]
 
+use core::cell::Cell;
+use arduino_hal::port::mode::{Floating, Input};
+use arduino_hal::port::{Pin, D2};
 use arduino_hal::prelude::_unwrap_infallible_UnwrapInfallible;
+use avr_device::interrupt::Mutex;
 use panic_halt as _;
 use rust_x_arduino::echo::Echo;
 use rust_x_arduino::interrupts::RotCounter;
 use rust_x_arduino::movement::engine::Engine;
 use rust_x_arduino::movement::movement::Movement;
 use rust_x_arduino::servo::Servo;
-use rust_x_arduino::timing::millis::Timer;
+use rust_x_arduino::timing::millis::{millis, Timer};
+use infrared::{protocol::nec::NecCommand, protocol::*, Receiver};
+
+
+type IrPin = Pin<Input<Floating>, D2>;
+type IrProto = Nec;
+type IrCmd = NecCommand;
+static mut RECEIVER: Option<Receiver<IrProto, IrPin>> = None;
+
+static CMD: Mutex<Cell<Option<IrCmd>>> = Mutex::new(Cell::new(None));
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -40,12 +53,15 @@ fn main() -> ! {
         pins.a1.into_floating_input(),
     );
 
-    let servo = Servo::new(dp.TC1, pins.d9.into_output());
+    let mut servo = Servo::new(dp.TC1, pins.d9.into_output());
     let mut movement = Movement::new(left_engine, right_engine, counter);
-    let mut echo = Echo::new(pins.a5.into_output(), pins.a4.into_floating_input());
+    let mut echo = Echo::new(pins.d10.into_output(), pins.d11.into_floating_input());
+    let ir = Receiver::with_pin(38_000, pins.d2);
 
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };
+
+    servo.set_angle(90);
 
     const GOAL: i32 = 50;
 
@@ -68,5 +84,21 @@ fn main() -> ! {
         }
 
         movement.set_speed(speed);
+    }
+}
+
+#[avr_device::interrupt(atmega328p)]
+fn PCINT2() {
+    let recv = unsafe { RECEIVER.as_mut().unwrap() };
+
+    match recv.event_instant(millis()) {
+        Ok(Some(cmd)) => {
+            avr_device::interrupt::free(|cs| {
+                let cell = CMD.borrow(cs);
+                cell.set(Some(cmd));
+            });
+        }
+        Ok(None) => (),
+        Err(_) => (),
     }
 }

@@ -75,3 +75,7 @@ impl Timer {
         ((m << 8) + t as u32) * (64 / CLOCK_CYCLES_PER_MICROSECOND)
     }
 }
+
+pub fn millis() -> u32 {
+    avr_device::interrupt::free(|cs| TIMER0_MILLIS.borrow(cs).get())
+}
