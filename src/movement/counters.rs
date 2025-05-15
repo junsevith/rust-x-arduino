@@ -13,24 +13,22 @@ static RIGHT_COUNTER: Mutex<Cell<u32>> = Mutex::new(Cell::new(0));
 
 #[avr_device::interrupt(atmega328p)]
 fn PCINT1() {
-    let left = unsafe {COUNTER_STATE.assume_init_ref().left_changed()};
-    let right = unsafe {COUNTER_STATE.assume_init_ref().right_changed()};
+    let left = unsafe { COUNTER_STATE.assume_init_ref().left_changed() };
+    let right = unsafe { COUNTER_STATE.assume_init_ref().right_changed() };
     if left {
         avr_device::interrupt::free(|cs| {
             LEFT_COUNTER.borrow(cs).update(|x| x + 1);
         });
-        unsafe {COUNTER_STATE.assume_init_mut().update_left()};
+        unsafe { COUNTER_STATE.assume_init_mut().update_left() };
     }
     if right {
         avr_device::interrupt::free(|cs| {
             RIGHT_COUNTER.borrow(cs).update(|x| x + 1);
         });
-        unsafe {COUNTER_STATE.assume_init_mut().update_right()};
+        unsafe { COUNTER_STATE.assume_init_mut().update_right() };
     }
 }
-pub struct RotCounter {
-    register: arduino_hal::pac::EXINT,
-}
+pub struct RotCounter {}
 
 struct RotCounterState {
     pin_left: LeftPin,
@@ -71,7 +69,7 @@ impl RotCounterState {
 }
 
 impl RotCounter {
-    pub fn new(register: arduino_hal::pac::EXINT, pin_left: LeftPin, pin_right: RightPin) -> Self {
+    pub fn new(register: &arduino_hal::pac::EXINT, pin_left: LeftPin, pin_right: RightPin) -> Self {
         register.pcicr.write(|w| w.pcie().bits(2u8));
         register.pcmsk1.write(|w| w.pcint().bits(3u8));
 
@@ -79,18 +77,14 @@ impl RotCounter {
             COUNTER_STATE = MaybeUninit::new(RotCounterState::new(pin_left, pin_right));
         }
 
-        RotCounter { register }
+        RotCounter {}
     }
 
     pub fn left_count(&self) -> u32 {
-        avr_device::interrupt::free(|cs| {
-            LEFT_COUNTER.borrow(cs).get()
-        })
+        avr_device::interrupt::free(|cs| LEFT_COUNTER.borrow(cs).get())
     }
 
     pub fn right_count(&self) -> u32 {
-        avr_device::interrupt::free(|cs| {
-            RIGHT_COUNTER.borrow(cs).get()
-        })
+        avr_device::interrupt::free(|cs| RIGHT_COUNTER.borrow(cs).get())
     }
 }

@@ -1,11 +1,11 @@
 #![no_std]
 #![no_main]
 #![feature(abi_avr_interrupt)]
-#![feature(cell_update)]
 
 use arduino_hal::prelude::_unwrap_infallible_UnwrapInfallible;
+#[allow(unused_imports)]
 use panic_halt as _;
-use rust_x_arduino::interrupts::RotCounter;
+use rust_x_arduino::movement::counters::RotCounter;
 use rust_x_arduino::timing::millis::Timer;
 
 //Przetestować to, bo źle działa na wokwi
@@ -19,7 +19,7 @@ fn main() -> ! {
     timer.init_pwm();
 
     let counter = RotCounter::new(
-        dp.EXINT,
+        &dp.EXINT,
         pins.a0.into_floating_input(),
         pins.a1.into_floating_input(),
     );

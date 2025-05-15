@@ -1,8 +1,8 @@
 #![no_std]
 #![no_main]
 #![feature(abi_avr_interrupt)]
-#![feature(cell_update)]
 
+#[allow(unused_imports)]
 use panic_halt as _;
 use rust_x_arduino::timing::millis::Timer;
 

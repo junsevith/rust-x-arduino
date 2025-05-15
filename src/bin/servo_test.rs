@@ -1,9 +1,9 @@
 #![no_std]
 #![no_main]
 #![feature(abi_avr_interrupt)]
-#![feature(cell_update)]
 
 use rust_x_arduino::servo::Servo;
+#[allow(unused_imports)]
 use panic_halt as _;
 
 #[arduino_hal::entry]

@@ -3,6 +3,7 @@
 #![feature(abi_avr_interrupt)]
 
 use arduino_hal::prelude::_unwrap_infallible_UnwrapInfallible;
+#[allow(unused_imports)]
 use panic_halt as _;
 use rust_x_arduino::echo::Echo;
 use rust_x_arduino::timing::millis::Timer;

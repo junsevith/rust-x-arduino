@@ -17,21 +17,28 @@ path = "src/bin/main.rs"
 test = false
 bench = false
 
+[[bin]]
+test = false
+bench = false
+
 [dependencies]
 panic-halt = "0.2.0"
 ufmt = "0.2.0"
 nb = "1.1.0"
 embedded-hal = "1.0"
 infrared = "0.14.1"
-
-
 port-expander = "0.6.4"
 ag-lcd = {version = "0.3.0", features = ["i2c","ufmt"]}
+#ouroboros = {version = "0.18.5", features = ["alloc"]}
 
 [dependencies.arduino-hal]
 git = "https://github.com/rahix/avr-hal"
 rev = "fafaf587a32a4500239fd073f89d1b9c36b48092"
 features = ["arduino-uno"]
+
+[dependencies.avr-hal-generic]
+git = "https://github.com/rahix/avr-hal"
+rev = "fafaf587a32a4500239fd073f89d1b9c36b48092"
 
 [dependencies.avr-device]
 version = "0.7"
