@@ -1,6 +1,7 @@
 use crate::timing::millis::Timer;
 use arduino_hal::port::mode::Output;
 use arduino_hal::port::{Pin, PinOps, D5, D6};
+use crate::SomePin;
 
 impl Timer {
     pub fn init_pwm(&self) {
@@ -12,22 +13,22 @@ impl Timer {
         self.register.tccr0b.write(|w| w.cs0().prescale_64());
     }
 
-    pub fn create_pwm_pin<PIN: PinOps + AllowedPin>(&self, pin: Pin<Output, PIN>) -> PwmPin<PIN> {
+    pub fn create_pwm_pin<PIN: PinOps + PwmReady>(&self, pin: SomePin<PIN>) -> PwmPin<PIN> {
         PwmPin {
-            pin,
+            _pin: pin.into_output(),
             register: &self.register,
         }
     }
 }
 
-pub struct PwmPin<'a, PIN: PinOps + AllowedPin> {
-    pin: Pin<Output, PIN>,
+pub struct PwmPin<'a, PIN: PinOps + PwmReady> {
+    _pin: Pin<Output, PIN>,
     register: &'a arduino_hal::pac::TC0,
 }
 
-pub trait AllowedPin {}
-impl AllowedPin for D5 {}
-impl AllowedPin for D6 {}
+pub trait PwmReady {}
+impl PwmReady for D5 {}
+impl PwmReady for D6 {}
 
 pub trait PwmPinOps {
     fn enable(&mut self);

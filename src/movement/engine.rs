@@ -1,6 +1,7 @@
 use crate::timing::pwm::PwmPinOps;
 use arduino_hal::port::mode::Output;
 use arduino_hal::port::{Pin, PinOps};
+use crate::SomePin;
 
 pub struct Engine<PWM: PwmPinOps, F: PinOps, B: PinOps> {
     pwm: PWM,
@@ -14,12 +15,12 @@ where
     F: PinOps,
     B: PinOps,
 {
-    pub fn new(mut pwm: PWM, forward: Pin<Output, F>, backward: Pin<Output, B>) -> Self {
+    pub fn new(mut pwm: PWM, forward: SomePin<F>, backward: SomePin<B>) -> Self {
         pwm.enable();
         Self {
             pwm,
-            forward,
-            backward,
+            forward: forward.into_output(),
+            backward: backward.into_output(),
         }
     }
 
@@ -36,7 +37,7 @@ where
         self.forward.set_low();
         self.backward.set_high();
     }
-    
+
     pub fn stop(&mut self) {
         self.forward.set_low();
         self.backward.set_low();

@@ -1,6 +1,7 @@
 use arduino_hal::delay_us;
 use arduino_hal::port::mode::{Floating, Input, Output};
 use arduino_hal::port::{Pin, PinOps};
+use crate::SomePin;
 use crate::timing::millis::Timer;
 
 pub struct Echo<T: PinOps, E: PinOps> {
@@ -9,8 +10,8 @@ pub struct Echo<T: PinOps, E: PinOps> {
 }
 
 impl<T: PinOps, E: PinOps> Echo<T, E> {
-    pub fn new(trigger: Pin<Output, T>, echo: Pin<Input<Floating>, E>) -> Self {
-        Self { trigger, echo }
+    pub fn new(trigger: SomePin<T>, echo: SomePin<E>) -> Self {
+        Self { trigger: trigger.into_output() , echo }
     }
 
     pub fn distance(&mut self, timer: &Timer) -> u32 {

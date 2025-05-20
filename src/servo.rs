@@ -1,5 +1,6 @@
 use arduino_hal::port::mode::Output;
 use arduino_hal::port::D9;
+use crate::SomePin;
 
 pub struct Servo {
     timer: arduino_hal::pac::TC1,
@@ -14,8 +15,8 @@ const MIDDLE: u8 = 80;
 const INTERVAL: u32 = MAX_RIGHT - MAX_LEFT;
 
 impl Servo {
-    pub fn new(timer: arduino_hal::pac::TC1, pin: arduino_hal::port::Pin<Output, D9>) -> Self {
-        let mut new = Servo { timer, pin };
+    pub fn new(timer: arduino_hal::pac::TC1, pin: SomePin<D9>) -> Self {
+        let mut new = Servo { timer, pin: pin.into_output() };
         new.init();
         new
     }

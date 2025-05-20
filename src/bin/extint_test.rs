@@ -20,8 +20,8 @@ fn main() -> ! {
 
     let counter = RotCounter::new(
         &dp.EXINT,
-        pins.a0.into_floating_input(),
-        pins.a1.into_floating_input(),
+        pins.a0,
+        pins.a1,
     );
 
     unsafe { avr_device::interrupt::enable() };

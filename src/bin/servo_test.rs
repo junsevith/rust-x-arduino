@@ -12,7 +12,7 @@ fn main() -> ! {
     let pins = arduino_hal::pins!(dp);
     let mut serial = arduino_hal::default_serial!(dp, pins, 9600);
 
-    let mut servo = Servo::new(dp.TC1, pins.d9.into_output());
+    let mut servo = Servo::new(dp.TC1, pins.d9);
 
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };

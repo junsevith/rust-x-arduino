@@ -20,23 +20,11 @@ fn main() -> ! {
     let timer = Timer::new(dp.TC0);
     timer.init_pwm();
 
-    let mut left_engine = Engine::new(
-        timer.create_pwm_pin(pins.d6.into_output()),
-        pins.d7.into_output(),
-        pins.d4.into_output(),
-    );
+    let mut left_engine = Engine::new(timer.create_pwm_pin(pins.d6), pins.d7, pins.d4);
 
-    let mut right_engine = Engine::new(
-        timer.create_pwm_pin(pins.d5.into_output()),
-        pins.d12.into_output(),
-        pins.d8.into_output(),
-    );
+    let mut right_engine = Engine::new(timer.create_pwm_pin(pins.d5), pins.d12, pins.d8);
 
-    let counter = RotCounter::new(
-        &dp.EXINT,
-        pins.a0,
-        pins.a1,
-    );
+    let counter = RotCounter::new(&dp.EXINT, pins.a0, pins.a1);
 
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     unsafe { avr_device::interrupt::enable() };
@@ -46,7 +34,6 @@ fn main() -> ! {
     left_engine.forward();
     delay_ms(1000);
     right_engine.forward();
-
 
     loop {
         for i in 0..10 {

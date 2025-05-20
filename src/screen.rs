@@ -16,7 +16,7 @@ pub struct Screen<T: OutputPin, D: DelayNs> {
 }
 
 impl Screen<port_expander::Pin<'_, QuasiBidirectional, RefCell<Driver<avr_hal_generic::i2c::I2c<Atmega, TWI, avr_hal_generic::port::Pin<Input, PC4>, avr_hal_generic::port::Pin<Input, PC5>, DefaultClock>>>>, Delay> {
-    
+
     pub fn i2c(p:TWI, sda: arduino_hal::port::Pin<Input<Floating>,PC4>, scl: arduino_hal::port::Pin<Input<Floating>, PC5>) -> Pcf8574<RefCell<Driver<I2c>>> {
         let i2c_bus = I2c::new(p, sda.into_pull_up_input(), scl.into_pull_up_input(), 400000);
         Pcf8574::new(i2c_bus, true, true, true)
@@ -28,7 +28,7 @@ impl Screen<port_expander::Pin<'_, QuasiBidirectional, RefCell<Driver<avr_hal_ge
             .with_cols(16)
             .with_lines(Lines::TwoLines)
             .build();
-        
+
         Screen {
             lcd,
         }

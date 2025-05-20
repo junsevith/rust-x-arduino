@@ -18,7 +18,7 @@ fn main() -> ! {
     let timer = Timer::new(dp.TC0);
     timer.init_pwm();
 
-    let mut echo = Echo::new(pins.a5.into_output(), pins.a4.into_floating_input());
+    let mut echo = Echo::new(pins.a5, pins.a4);
 
 
     core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);

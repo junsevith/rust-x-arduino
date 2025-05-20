@@ -21,7 +21,7 @@ impl IrReceiver {
     pub fn new(register: &arduino_hal::pac::EXINT, pin: IrPin, timer: TC2) -> Self {
         CLOCK.start(timer);
         
-        pin.enable_pin_change_interrupt(register);
+        pin.enable_pcint(register);
         
 
         unsafe {
@@ -37,11 +37,11 @@ impl IrReceiver {
 }
 
 trait EnablePCINT {
-    fn enable_pin_change_interrupt(&self, register: &arduino_hal::pac::EXINT);
+    fn enable_pcint(&self, register: &arduino_hal::pac::EXINT);
 }
 
 impl EnablePCINT for IrPin {
-    fn enable_pin_change_interrupt(&self, register: &arduino_hal::pac::EXINT) {
+    fn enable_pcint(&self, register: &arduino_hal::pac::EXINT) {
         // Enable group 2 (PORTD)
         register.pcicr.write(|w| w.pcie().bits(0b100));
 
